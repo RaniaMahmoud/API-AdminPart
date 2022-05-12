@@ -257,6 +257,12 @@ namespace E_commerceAPI.Controllers
                         IdentityResult RoleResult = await UserManager.AddToRoleAsync(UserModel, "Admin");
                         if (RoleResult.Succeeded)
                         {
+                            Admin admin = new Admin()
+                            {
+                                Name = newUser.Full_Name,
+                                Password = newUser.password
+                            };
+                            adminRepository.Insert(admin);
                             return Ok(newUser);
                             //return RedirectToAction("Index", "Home", categoryRepository.GetAll());
                         }
