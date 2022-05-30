@@ -75,6 +75,9 @@ namespace E_commerceAPI
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<ContextDB>();
+
+            //services.AddIdentity<AppUser, UserManager<AppUser>>()
+            //    .AddEntityFrameworkStores<ContextDB>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme =

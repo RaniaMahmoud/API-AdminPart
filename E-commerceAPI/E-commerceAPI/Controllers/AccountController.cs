@@ -250,27 +250,40 @@ namespace E_commerceAPI.Controllers
                     UserModel.PasswordHash = newUser.password;
                     //UserModel.Address = newUser.Address;
                     //UserModel.PhoneNumber = newUser.PhoneNumber;
-                    IdentityResult result =
-                        await UserManager.CreateAsync(UserModel, UserModel.PasswordHash);
-                    if (result.Succeeded)
+     
+                    Address address = new Address()
                     {
-                        IdentityResult RoleResult = await UserManager.AddToRoleAsync(UserModel, "Admin");
-                        if (RoleResult.Succeeded)
-                        {
-                            Admin admin = new Admin()
-                            {
-                                Name = newUser.Full_Name,
-                                Password = newUser.password
-                            };
-                            adminRepository.Insert(admin);
-                            return Ok(newUser);
-                            //return RedirectToAction("Index", "Home", categoryRepository.GetAll());
-                        }
-                        else
-                        {
-                            return BadRequest();
+                        City = newUser.Address.City,
+                        postalCode = newUser.Address.postalCode,
+                        street = newUser.Address.street
+                    };
 
+                    if (addressRepository.Insert(address) > 0)
+                    {
+                        UserModel.AddressId = address.id;
+                        IdentityResult result =
+                            await UserManager.CreateAsync(UserModel, UserModel.PasswordHash);
+                        if (result.Succeeded)
+                        {
+                            IdentityResult RoleResult = await UserManager.AddToRoleAsync(UserModel, "Admin");
+                            if (RoleResult.Succeeded)
+                            {
+                                //Admin admin = new Admin()
+                                //{
+                                //    Name = newUser.Full_Name,
+                                //    Password = newUser.password
+                                //};
+                                //adminRepository.Insert(admin);
+                                return Ok(newUser);
+                                //return RedirectToAction("Index", "Home", categoryRepository.GetAll());
+                            }
+                            else
+                            {
+                                return BadRequest();
+
+                            }
                         }
+
                     }
                     else
                     {
